@@ -1,77 +1,64 @@
 package com.kayky.model.entities;
 
-public class Sale {
+import com.kayky.model.entities.enums.PaymentStatus;
 
-    public String name;
-    public double price;
-    public int quantity;
-    public int quantityInStock;
+import java.util.ArrayList;
+import java.util.List;
 
-    public Sale(){
+public class Sale { //Classe responsavel pelo fechamento do carrinho, ato da venda em si
+
+    public Double total;
+    PaymentStatus statusPayment;
+
+    List<Cart> sold = new ArrayList<>();
+
+    public Sale(Double total, PaymentStatus statusPayment) {
+        this.total = total;
+        this.statusPayment = statusPayment;
     }
 
-    public Sale(String name, double price, int quantity, int quantityInStock){
-        this.name = name;
-        this.price = price;
-        this.quantity = quantity;
-        this.quantityInStock = quantityInStock;
+    public Double getTotal() {
+        return total;
     }
 
-    public String getName() {
-        return name;
+    public void setTotal(Double total) {
+        this.total = total;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public PaymentStatus getStatusPayment() {
+        return statusPayment;
     }
 
-    public double getPrice() {
-        return price;
+    public void setStatusPayment(PaymentStatus statusPayment) {
+        this.statusPayment = statusPayment;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void addItem(Cart item){
+        sold.add(item);
     }
 
-    public int getQuantity() {
-        return quantity;
+    public void removeItem(Cart item){
+        sold.remove(item);
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public double checkout(){
+        for(Cart itens: sold){
+            total += itens.getSubtotal(itens.getProduct().getId());
+        }
+        return total;
     }
 
-    public int getQuantityInStock() {
-        return quantityInStock;
-    }
-
-    public void setQuantityInStock(int quantityInStock) {
-        this.quantityInStock = quantityInStock;
-    }
-
-    public void addItem(int quantity){
-        this.quantity += quantity;
-    }
-
-    public void removeItem(int quantity){
-        this.quantity -= quantity;
-    }
-
-    public void upgradeStock(){
-        this.quantityInStock -= quantity;
-    }
-
-    public double total(){
-        return quantity * price;
-    }
-
+    @Override
     public String toString(){
-        return name
-                +String.format(", R$ %.2f, ", price)
-                +"quantidade "
-                +quantity
-                +String.format( ", total R$%.2f", total())
-                +", quantidade no estoque "
-                +quantityInStock;
+        String NFC = "NOTA FISCAL: ";
+        for(Cart itens: sold){
+            NFC += "ID " + itens.getProduct().getId()+
+                    ", "+ itens.getProduct().getName()+
+                    ", quantidade " + itens.getQuantity()+
+                    ", quantidade no estoque " + itens.getProduct().getQuantityInStock()+
+                    String.format(", subtotal R$ %.2f, ",itens.getSubtotal(itens.getProduct().getId()))+
+                    String.format("total R$ %.2f", checkout());
+        }
+        return NFC;
     }
 }

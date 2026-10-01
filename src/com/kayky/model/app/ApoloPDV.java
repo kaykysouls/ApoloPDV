@@ -1,9 +1,13 @@
 package com.kayky.model.app;
 
+import com.kayky.model.entities.Cart;
+import com.kayky.model.entities.Product;
 import com.kayky.model.entities.Sale;
+import com.kayky.model.entities.enums.PaymentStatus;
 
 import java.util.Locale;
 import java.util.Scanner;
+
 
 public class ApoloPDV {
 
@@ -12,37 +16,32 @@ public class ApoloPDV {
         Locale.setDefault(Locale.US);
         Scanner input = new Scanner(System.in);
 
-        System.out.print("Nome: ");
-        String name = input.nextLine();
-        System.out.print("Preco: R$ ");
-        double price = input.nextDouble();
-        System.out.print("Quantidade a ser adquirida: ");
+        System.out.println("Cadastro produto:");
+        System.out.print("Quantos produtos serao cadastrados: ");
+        int quantityInStock = input.nextInt();
+        Sale sale = null;
+        System.out.print("Quantos produtos deste produto deseja adquirir: ");
         int quantity = input.nextInt();
 
-        int quantityInStock = 100;
+        for(int i=0;i<quantity;i++){
+            System.out.print("ID: ");
+            int id = input.nextInt();
 
-        Sale sale = new Sale(name, price, quantity, quantityInStock);
+            System.out.print("Nome: ");
+            input.nextLine();
+            String name = input.nextLine();
 
-        sale.upgradeStock();
+            System.out.print("Price: ");
+            double price = input.nextDouble();
 
-        System.out.println("Venda atual: " + sale);
+            String status = input.nextLine();
 
-        System.out.println();
+            Cart cart = new Cart(new Product(id, name, price, quantityInStock), quantity);
+            sale = new Sale(cart.getSubtotal(cart.getProduct().getId()), PaymentStatus.PAYD);
+            sale.addItem(cart);
 
-        System.out.print("Quantos itens quer adicionar a venda? ");
-        quantity = input.nextInt();
-
-        sale.addItem(quantity);
-        sale.upgradeStock();
-        System.out.println("Venda atualizada: " + sale);
-
-        System.out.println("Quantos itens deseja remover da venda? ");
-        quantity = input.nextInt();
-        sale.removeItem(quantity);
-        sale.upgradeStock();
-
-        System.out.println("Venda atualizada: " + sale);
-
+        }
+        System.out.println(sale);
         input.close();
     }
 }
