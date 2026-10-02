@@ -37,11 +37,14 @@ public class ApoloPDV {
             String status = input.nextLine();
 
             Cart cart = new Cart(new Product(id, name, price, quantityInStock), quantity);
-            sale = new Sale(cart.getSubtotal(cart.getProduct().getId()), PaymentStatus.PAYD);
+            sale = new Sale(PaymentStatus.PAYD);
             sale.addItem(cart);
 
         }
-        System.out.println(sale);
+        for(int i=0;i<quantity;i++){
+            System.out.println(sale);
+        }
+
         input.close();
     }
 }

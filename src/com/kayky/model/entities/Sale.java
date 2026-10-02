@@ -7,22 +7,12 @@ import java.util.List;
 
 public class Sale { //Classe responsavel pelo fechamento do carrinho, ato da venda em si
 
-    public Double total;
     PaymentStatus statusPayment;
 
     List<Cart> sold = new ArrayList<>();
 
-    public Sale(Double total, PaymentStatus statusPayment) {
-        this.total = total;
+    public Sale(PaymentStatus statusPayment) {
         this.statusPayment = statusPayment;
-    }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
     }
 
     public PaymentStatus getStatusPayment() {
@@ -42,23 +32,24 @@ public class Sale { //Classe responsavel pelo fechamento do carrinho, ato da ven
     }
 
     public double checkout(){
+        double total = 0;
         for(Cart itens: sold){
-            total += itens.getSubtotal(itens.getProduct().getId());
+            total += itens.getSubtotal();
         }
         return total;
     }
 
-    @Override
     public String toString(){
-        String NFC = "NOTA FISCAL: ";
+        StringBuilder sb = new StringBuilder();
+
         for(Cart itens: sold){
-            NFC += "ID " + itens.getProduct().getId()+
-                    ", "+ itens.getProduct().getName()+
-                    ", quantidade " + itens.getQuantity()+
-                    ", quantidade no estoque " + itens.getProduct().getQuantityInStock()+
-                    String.format(", subtotal R$ %.2f, ",itens.getSubtotal(itens.getProduct().getId()))+
-                    String.format("total R$ %.2f", checkout());
+            sb.append("ID: ").append(itens.getProduct().getId()).append("\n");
+            sb.append(itens.getProduct().getName()).append("\n");
+            sb.append(String.format("Preco R$ %.2f\n", itens.getProduct().getPrice()));
+            sb.append("Quantidade ").append(itens.quantity).append("\n");
+            sb.append("Quantidade no estoque ").append(itens.getProduct().getQuantityInStock()).append("\n");
         }
-        return NFC;
+        sb.append(String.format("Total R$ %.2f\n", checkout()));
+        return sb.toString();
     }
 }

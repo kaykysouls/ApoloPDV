@@ -31,11 +31,13 @@ public class Cart { //Carrinho de compras com os produtos a serem adquiridos
         this.quantity = quantity;
     }
 
-    public double getSubtotal(int id){ //Calcula um grupo especifico de itens
+    public List<Product> getItens() {
+        return itens;
+    }
+
+    public double getSubtotal(){ //Calcula um grupo especifico de itens
         double subtotal = 0;
-        if(product.getId() == id){
-           subtotal += getProduct().getPrice() * quantity;
-        }
+        subtotal += quantity * getProduct().getPrice();
         return subtotal;
     }
 }
